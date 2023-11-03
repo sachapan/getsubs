@@ -1,0 +1,4 @@
+requests
+python-dotenv
+html2markdown
+ffmpeg-python
