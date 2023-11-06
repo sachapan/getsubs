@@ -1,11 +1,12 @@
 ## getsubs.py is a python script to download subtitles either by querying for the latest videos
-## or providing a video file or url to a video file.
+## or providing a video file or a url to a video file.
 
 ### Installation
 
 1. Open command prompt/terminal
 1. Clone the repository
     `git clone https://github.com/sachapan/getsubs.git`
+    `cd getsubs`
 1. Install python 3
     [Windows](https://www.python.org/downloads/windows/)
     Linux use the package manager, e.g. on Debian based systems:
@@ -23,3 +24,5 @@
     `pip install -r requirements.txt`
 5. Run the script:
     `python3 getjwsubs.py`
+6. Deactivate the python virtual environment.
+    `deactivate`
