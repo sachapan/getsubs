@@ -66,6 +66,5 @@ Or a URL of a video file:
 The subtitles that are encoded into the video file will be extracted
 and displayed.  These are sometimes known as "soft subtitles".
 
-NOTE: the script only displays subtitles that are already encoded into
-a video file, it will not attempt to extract susbtitles from the audio
+NOTE: the script will *not* attempt to extract susbtitles from the audio
 track(s).
