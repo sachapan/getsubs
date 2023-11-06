@@ -1,6 +1,4 @@
 ## getsubs.py is a python script to download subtitles
-## either by querying for the latest videos
-## or providing a video file or a url to a video file.
 
 ### Installation
 
@@ -36,13 +34,18 @@ for the latest files and display the titles.  You are prompted
 to enter the corresponding number of the title and the script
 will download and display the subtitles.
 
-The script can also be run by adding either the name of a video file previously downloaded:
+The script can also be run by adding either the name of a video file 
+previously downloaded:
+
 `python3 getjwsubs.py video.mp4`
 
 Or a URL of a video file:
+
 `python3 getjwsubs.py htttps://website.com/cool_video.mp4`
 
-The subtitles that are encoded into the video file will be extracted and displayed.
+The subtitles that are encoded into the video file will be extracted
+and displayed.  These are sometimes known as "soft subtitles".
 
-NOTE: the script only displays subtitles that are already encoded into a video file, it will
-not attempt to extract susbtitles from the audio track(s).
+NOTE: the script only displays subtitles that are already encoded into
+a video file, it will not attempt to extract susbtitles from the audio
+track(s).
