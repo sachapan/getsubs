@@ -136,8 +136,12 @@ def processlines(lines):
         result_lines.append(current_line.strip())
     return(result_lines)
 
-def main():
+def clearscreen():
     subprocess.call('clear' if os.name == 'posix' else 'cls')
+    return()
+
+def main():
+    clearscreen()
     print("\nSubtitle downloader for jw.org videos.\n")
     #print("Visit the official website of Jehovah's Witnesses: https://jw.org")
     if len(sys.argv) == 2:
@@ -187,8 +191,10 @@ def main():
             print(BANNER)
             print("Number \t Title")
             print("----- \t -----")
+            numberofvideos = 0
             for item in range(len(vidslist)):
                 print(vidslist[item][0], "\t", vidslist[item][2])
+                numberofvideos += 1
             print("\n")        
             vidnum = input("Please enter the video number, q to exit: ")
             if vidnum == "":
@@ -196,16 +202,22 @@ def main():
             if vidnum == "q":
                 break
             if not vidnum.strip().isdigit():
+                print("\nNot a valid video number.  Please try again.\n")
                 continue
-            subtitle = vidslist[int(vidnum)]
-            print("\nTitle: ", subtitle[2])
-            print("\nLink: ", subtitle[3])
-            # print("\nSubtitles: ")
-            print("-----Subtitles begin here.-----\n")
-            print(*subtitle[4], sep='\n')
-            print("\n\n-----Subtitles end here.-----\n")
-    print(BANNER)
-    print("Hope that helps.\nGoodbye.")
+            vidnum = int(vidnum)
+            if vidnum in range(numberofvideos):
+                subtitle = vidslist[int(vidnum)]
+                print("\nTitle: ", subtitle[2])
+                print("\nLink: ", subtitle[3])
+                # print("\nSubtitles: ")
+                print("-----Subtitles begin here.-----\n")
+                print(*subtitle[4], sep='\n')
+                print("\n\n-----Subtitles end here.-----\n")
+            else:
+                print("\nNot a valid video number.  Please try again.\n")
+                continue
+        print(BANNER)
+        print("Hope that helps.\nGoodbye.")
 
 if __name__ == "__main__":
     main()
