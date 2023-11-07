@@ -12,9 +12,9 @@ import sys
 import requests
 import html2markdown
 
-url="https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
+URL="https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
 tmp = ""
-banner = """   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----. 
+BANNER = """   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----. 
    | || {  } |    { {__-`| } { | {_} }`-' '-'{ |`-' '-'} |   } |__}{ {__-` 
 {`-' }{  /\  }    .-._} }\ `-' / {_} }  } {  | }  } {  } '--.} '__}.-._} } 
  `---'`-'  `-'    `----'  `---'`----'   `-'  `-'  `-'  `----'`----'`----'  
@@ -36,7 +36,7 @@ helptextalt = """               This program queries for the latest videos from 
             """
 
 def help():
-    print(banner)
+    print(BANNER)
     print(helptextalt)
     sys.exit()
 
@@ -54,7 +54,7 @@ def download_video(url, mytmp):
     print("Downloading to: ", filename)
     try:
         query_parameters = {"downloadformat": "mp4"}
-        response = requests.get(url, params=query_parameters, stream=True)
+        response = requests.get(URL, params=query_parameters, stream=True)
         if response.ok:
             with open(filename, mode="wb") as file:
                 for chunk in response.iter_content(chunk_size=10 * 1024):
@@ -137,10 +137,11 @@ def processlines(lines):
     return(result_lines)
 
 def main():
+    subprocess.call('clear' if os.name == 'posix' else 'cls')
     print("\nSubtitle downloader for jw.org videos.\n")
     #print("Visit the official website of Jehovah's Witnesses: https://jw.org")
-    print(banner)
     if len(sys.argv) == 2:
+        print(BANNER)
         vidurl = sys.argv[1]
         if vidurl == '--help':
             help()
@@ -166,7 +167,7 @@ def main():
             help()
     # Default run with querying new videos
     else:
-        r = requests.get(url)
+        r = requests.get(URL)
         r_dict = r.json()
         r_json = json.dumps(r_dict, indent=4)
         parsed_json = json.loads(r_json)
@@ -183,13 +184,13 @@ def main():
             values = [item, video_key, title, video, subs]
             vidslist.append(values)
         while True:
-            print(banner)
+            print(BANNER)
             print("Number \t Title")
             print("----- \t -----")
             for item in range(len(vidslist)):
                 print(vidslist[item][0], "\t", vidslist[item][2])
             print("\n")        
-            vidnum = input("Please enter the video number or q to exit: ")
+            vidnum = input("Please enter the video number, q to exit: ")
             if vidnum == "":
                 continue
             if vidnum == "q":
@@ -203,7 +204,7 @@ def main():
             print("-----Subtitles begin here.-----\n")
             print(*subtitle[4], sep='\n')
             print("\n\n-----Subtitles end here.-----\n")
-    print(banner)
+    print(BANNER)
     print("Hope that helps.\nGoodbye.")
 
 if __name__ == "__main__":
