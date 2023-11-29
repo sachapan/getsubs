@@ -61,7 +61,7 @@ previously downloaded:
 
 Or a URL of a video file:
 
-`python3 getjwsubs.py htttps://website.com/cool_video.mp4`
+`python3 getjwsubs.py https://website.com/cool_video.mp4`
 
 The subtitles that are encoded into the video file will be extracted
 and displayed.  These are sometimes known as "soft subtitles".
