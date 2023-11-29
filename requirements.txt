@@ -1,4 +1,8 @@
 requests
 python-dotenv
 html2markdown
-ffmpeg-python
+bs4
+ffmpeg
+argparse
+python-docx
+pypub3
