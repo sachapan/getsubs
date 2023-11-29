@@ -1,4 +1,4 @@
-## getsubs.py is a python script to download subtitles
+## getjwsubs.py is a python script to download subtitles
 
 ### Installation
 
