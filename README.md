@@ -59,8 +59,9 @@ This program has two modes of operation:
     you to choose which one you'd like the subtitles for and then displays them.
 
     Mode 2:
-    If you provide the URL of a video file as a command line parameter, the program downloads the video
-    and attempts to extract the subtitle information from the video to display.
+    If you provide the URL of a video file as a command line parameter, the program 
+    downloads the video and attempts to extract the subtitle information from the 
+    video to display.
 
     There are two additional parameters that can passed when providing the URL:
         -t Outputs the subtitles to a text file in the current directory named with the
@@ -68,7 +69,8 @@ This program has two modes of operation:
         -d Outputs the subtitles to a Microsoft Word docx file in the current directory
             named with the title of the video.
 
-    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg.exe program is
+    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg.exe 
+    program is
     available in your PATH.
 
     You can find FFmpeg at:  https://ffmpeg.org/download.html
