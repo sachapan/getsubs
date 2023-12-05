@@ -6,3 +6,4 @@ ffmpeg
 argparse
 python-docx
 pypub3
+ffmpeg-python
