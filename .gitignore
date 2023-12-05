@@ -166,3 +166,5 @@ lib64
 *mp4
 *srt
 pyinstaller
+*txt
+*docx
