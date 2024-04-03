@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+#
+# Pull before committing
+
+git pull --no-rebase
+
