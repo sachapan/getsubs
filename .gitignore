@@ -168,3 +168,5 @@ lib64
 pyinstaller
 *txt
 *docx
+output*
+*vtt
