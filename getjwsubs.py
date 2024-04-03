@@ -200,21 +200,35 @@ def webmenu():
     parsed_json = json.loads(r_json)
     media = parsed_json["category"]["media"]
     vidslist = []
+    ids = 0
     for item in range(len(media)):
+        #print("Item:", item)
         video_key = media[item]["languageAgnosticNaturalKey"]
+        #print(video_key)
         title = media[item]["title"]
+        # Add logic for video files that do not contain subtitles like song releases
+        # April 3, 2024
+        if "subtitles" not in media[item]["files"][3]:
+            continue
         subtitles_url = media[item]["files"][3]["subtitles"]["url"]
+        #print(subtitles_url)
         video = media[item]["files"][3]["progressiveDownloadURL"]
         download = download_file(subtitles_url)
         subs = processlines(download)
         keys = ['id', 'video key', 'name', 'link', 'subtitles']
-        values = [item, video_key, title, video, subs]
+        values = [ids, video_key, title, video, subs]
         vidslist.append(values)
+        ids = ids + 1
+        #print(video_key)
+    #print("Number of videos available: ", len(vidslist))
+    #print(vidslist)
+    #exit()
     while True:
         print(banner)
         print("Number \t Title")
         print("----- \t -----")
         for item in range(len(vidslist)):
+            #print(vidslist[item][0], "\t", vidslist[item][2])
             print(vidslist[item][0], "\t", vidslist[item][2])
         print("\n")        
         vidnum = input("Please enter the video number or q to exit: ")
@@ -224,6 +238,7 @@ def webmenu():
             break
         if not vidnum.strip().isdigit():
             continue
+        # Add logic for numbers larger than max len(vidslist)
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
         print("\nLink: ", subtitle[3])
