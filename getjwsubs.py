@@ -239,6 +239,9 @@ def webmenu():
         if not vidnum.strip().isdigit():
             continue
         # Add logic for numbers larger than max len(vidslist)
+        #if int(vidnum) > len(vidslist):
+        #    print("Please enter an available selection")
+        #    continue
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
         print("\nLink: ", subtitle[3])
