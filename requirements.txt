@@ -1,9 +1,9 @@
-requests
-python-dotenv
-html2markdown
-bs4
-ffmpeg
-argparse
+requests==2.31.0
+python-dotenv==1.0.0
+html2markdown==0.1.7
+bs4==0.0.1
+#ffmpeg==0.2.0
+argparse==1.4.0
 python-docx
 pypub3
-ffmpeg-python
+ffmpeg-python==0.2.0
