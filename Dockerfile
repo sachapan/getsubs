@@ -1,5 +1,7 @@
-Use the official Python image as the base image
-FROM python:3.11-slim
+#Use the official Python image as the base image
+#FROM python:3.11-slim
+FROM alpine:3.17
+RUN apk add --no-cache python3 ffmpeg
 
 # Set the working directory in the container
 WORKDIR /app
@@ -8,10 +10,11 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m ensurepip
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the script file to the container
 COPY getjwsubs.py .
 
 # Set the command to run your Python script
-CMD ["python", "getjwsubs.py"]
+CMD ["python3", "getjwsubs.py"]
