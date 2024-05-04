@@ -20,7 +20,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module='html2markdown')
 
 url="https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
 tmp = ""
-banner = """   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----. 
+banner = """
+   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----. 
    | || {  } |    { {__-`| } { | {_} }`-' '-'{ |`-' '-'} |   } |__}{ {__-` 
 {`-' }{  /\  }    .-._} }\ `-' / {_} }  } {  | }  } {  } '--.} '__}.-._} } 
  `---'`-'  `-'    `----'  `---'`----'   `-'  `-'  `-'  `----'`----'`----'  
