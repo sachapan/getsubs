@@ -14,6 +14,8 @@ import requests
 import html2markdown
 from docx import Document
 from argparse import RawTextHelpFormatter
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='html2markdown')
 
 url="https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
 tmp = ""
@@ -149,7 +151,7 @@ def processlines(lines):
         if not line:
             continue
         # Concatenate lines less than 120 characters
-        # NOTE: This is the lazy way, really should be working with words.
+        # NOTE: This is the lazy way, really should be working with words or sentences.
         if line:
             if len(current_line) + len(line) <= 120:
                 current_line += line + " "
@@ -274,8 +276,8 @@ This program has two modes of operation:
     You can find FFmpeg at:  https://ffmpeg.org/download.html
     """                                            
     print("\nSubtitle downloader for jw.org videos.\n")
-    print(banner)
-    #print("Visit the official website of Jehovah's Witnesses: https://jw.org")
+    #print(banner)
+    print("Visit the official website of Jehovah's Witnesses: https://jw.org")
     parser = argparse.ArgumentParser(description=main.__doc__, formatter_class=RawTextHelpFormatter)
     parser.add_argument(
         '-d', 
