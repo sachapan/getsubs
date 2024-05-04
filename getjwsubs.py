@@ -194,8 +194,7 @@ def savetext(title, subs):
 def webmenu():
     """
     The webmenu function does not accept any parameters.  It queries the currently available videos from {url},
-    and presents a menu for the user to select from.  Upon selection, the video subtitles are downloaded, processed
-    and displayed."""
+    and presents a menu for the user to select from.  Upon selection, the video subtitles are displayed."""
     r = requests.get(url)
     r_dict = r.json()
     r_json = json.dumps(r_dict, indent=4)
@@ -230,9 +229,9 @@ def webmenu():
         print("Number \t Title")
         print("----- \t -----")
         for item in range(len(vidslist)):
-            #print(vidslist[item][0], "\t", vidslist[item][2])
             print(vidslist[item][0], "\t", vidslist[item][2])
-        print("\n")        
+            #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
+        #print("\n")        
         vidnum = input("Please enter the video number or q to exit: ")
         if vidnum == "":
             continue
@@ -241,16 +240,17 @@ def webmenu():
         if not vidnum.strip().isdigit():
             continue
         # Add logic for numbers larger than max len(vidslist)
-        #if int(vidnum) > len(vidslist):
-        #    print("Please enter an available selection")
-        #    continue
+        if int(vidnum) > len(vidslist) - 1:
+            print("Error!\n  Please enter a number from the available options.")
+            print("  Maximum number is:", len(vidslist) - 1)
+            continue
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
         print("\nLink: ", subtitle[3])
         # print("\nSubtitles: ")
         print("-----Subtitles begin here.-----\n")
         print(*subtitle[4], sep='\n')
-        print("\n\n-----Subtitles end here.-----\n")
+        print("\n-----Subtitles end here.-----\n")
     return()
 
 def main():
@@ -270,7 +270,7 @@ This program has two modes of operation:
         -d Outputs the subtitles to a Microsoft Word docx file in the current directory
             named with the title of the video.
 
-    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg.exe program is 
+    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg program is 
     available in your PATH.
     
     You can find FFmpeg at:  https://ffmpeg.org/download.html
