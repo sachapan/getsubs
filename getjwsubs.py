@@ -232,14 +232,27 @@ def webmenu():
             print(vidslist[item][0], "\t", vidslist[item][2])
             #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
         #print("\n")        
-        vidnum = input("Please enter the video number or q to exit: ")
+        vidnum = input("Please enter the video number, supply the URL of the video file or q to exit: ")
         if vidnum == "":
             continue
         if vidnum == "q":
             break
+        # Add test for URL here
+        if vidnum.startswith('http'):
+            download = download_video(vidnum, tmp) 
+            if download == "fail":
+                print("I'm sorry, the download failed.")
+            title = get_title(download)
+            subs = get_subtitles(download)
+            subs = processlines(subs)
+            print("\nTitle: ", title)
+            print("\n-----Subtitles begin here.-----\n")
+            print(*subs, sep="\n")
+            print("\n-----Subtitles end here.-----\n")
+        else:
+            print("ERROR: That doesn't appear to be a valid URL.\n")
         if not vidnum.strip().isdigit():
             continue
-        # Add logic for numbers larger than max len(vidslist)
         if int(vidnum) > len(vidslist) - 1:
             print("Error!\n  Please enter a number from the available options.")
             print("  Maximum number is:", len(vidslist) - 1)
@@ -247,7 +260,6 @@ def webmenu():
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
         print("\nLink: ", subtitle[3])
-        # print("\nSubtitles: ")
         print("-----Subtitles begin here.-----\n")
         print(*subtitle[4], sep='\n')
         print("\n-----Subtitles end here.-----\n")
