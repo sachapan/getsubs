@@ -1,4 +1,9 @@
-## getjwsubs.py is a python script to download subtitles
+# Downloads and/or extracts subtitles from videos primarily from https://jw.org
+
+
+### run the docker image
+
+`docker run -it ghcr.io/sachapan/getsubs`
 
 ### Installation
 
