@@ -216,8 +216,7 @@ def webmenu():
         video_key = media[item]["languageAgnosticNaturalKey"]
         #print(video_key)
         title = media[item]["title"]
-        # Add logic for video files that do not contain subtitles like song releases
-        # April 3, 2024
+        # Added logic for video files that do not contain subtitles like song releases
         if "subtitles" not in media[item]["files"][3]:
             continue
         subtitles_url = media[item]["files"][3]["subtitles"]["url"]
@@ -241,13 +240,12 @@ def webmenu():
             print(vidslist[item][0], "\t", vidslist[item][2])
             #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
         print("\n")        
-        vidnum = input("Please enter the video number, supply the URL of the video file or q to exit: ")
+        vidnum = input("Please enter the video number, supply the URL of the video file (must end with .mp4) or q to exit: ")
         if vidnum == "":
             continue
         if vidnum == "q":
             break
-        # Add test for URL here
-        if vidnum.startswith('http'):
+        if vidnum.startswith('http') and vidnum.endswith('.mp4'):
             download = download_video(vidnum, tmp) 
             if download == "fail":
                 print("I'm sorry, the download failed.")
