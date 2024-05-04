@@ -6,6 +6,7 @@ import os
 import re
 import json
 import argparse
+import urllib.request
 # import textwrap
 import ffmpeg
 import subprocess
@@ -68,6 +69,13 @@ def download_video(url, mytmp):
         print("Already downloaded: ", filename)
         return(filename)
     print("Downloading to: ", filename)
+    print("Checking for video file at URL provided.")
+    with urllib.request.urlopen(url) as response:
+        info = response.info()
+        print("File type found is: ", info.get_content_maintype())
+    if info.get_content_maintype() != "video":
+        print("Video file not found at ", url)
+        return("fail")
     try:
         query_parameters = {"downloadformat": "mp4"}
         response = requests.get(url, params=query_parameters, stream=True)
@@ -225,13 +233,13 @@ def webmenu():
     #print(vidslist)
     #exit()
     while True:
-        print(banner)
+        print("\n",banner)
         print("Number \t Title")
         print("----- \t -----")
         for item in range(len(vidslist)):
             print(vidslist[item][0], "\t", vidslist[item][2])
             #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
-        #print("\n")        
+        print("\n")        
         vidnum = input("Please enter the video number, supply the URL of the video file or q to exit: ")
         if vidnum == "":
             continue
@@ -242,15 +250,16 @@ def webmenu():
             download = download_video(vidnum, tmp) 
             if download == "fail":
                 print("I'm sorry, the download failed.")
+                continue 
             title = get_title(download)
             subs = get_subtitles(download)
             subs = processlines(subs)
             print("\nTitle: ", title)
-            print("\n-----Subtitles begin here.-----\n")
+            #print("\n-----Subtitles begin here.-----\n")
             print(*subs, sep="\n")
-            print("\n-----Subtitles end here.-----\n")
-        else:
-            print("ERROR: That doesn't appear to be a valid URL.\n")
+            #print("\n-----Subtitles end here.-----\n")
+        #else:
+        #    print("ERROR: That doesn't appear to be a valid URL.\n")
         if not vidnum.strip().isdigit():
             continue
         if int(vidnum) > len(vidslist) - 1:
@@ -259,10 +268,10 @@ def webmenu():
             continue
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
-        print("\nLink: ", subtitle[3])
-        print("-----Subtitles begin here.-----\n")
+        print("Link: ", subtitle[3],"\n")
+        #print("-----Subtitles begin here.-----\n")
         print(*subtitle[4], sep='\n')
-        print("\n-----Subtitles end here.-----\n")
+        #print("\n-----Subtitles end here.-----\n")
     return()
 
 def main():
@@ -290,6 +299,7 @@ This program has two modes of operation:
     print("\nSubtitle downloader for jw.org videos.\n")
     #print(banner)
     print("Visit the official website of Jehovah's Witnesses: https://jw.org")
+    print("Finding current videos.....")
     parser = argparse.ArgumentParser(description=main.__doc__, formatter_class=RawTextHelpFormatter)
     parser.add_argument(
         '-d', 
