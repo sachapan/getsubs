@@ -235,7 +235,7 @@ def webmenu():
     while True:
         print("\n",banner)
         print("Number \t Title")
-        print("----- \t -----")
+        print("------ \t -----")
         for item in range(len(vidslist)):
             print(vidslist[item][0], "\t", vidslist[item][2])
             #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
