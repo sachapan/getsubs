@@ -38,8 +38,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: "latest"
-          #${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           #tags: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.sha }}
           #tags: ghcr.io/sachapan/getsubs:${{ github.sha }}
