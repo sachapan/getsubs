@@ -37,7 +37,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm/V7,linux/arm/V8
+          platforms: 
+            linux/amd64
+            linux/arm/V8
           push: true
           tags: ghcr.io/sachapan/getsubs:latest
           #${{ steps.meta.outputs.tags }}
