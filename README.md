@@ -1,7 +1,7 @@
 # Downloads and/or extracts subtitles from videos primarily from https://jw.org
 
 
-### run the docker image
+### Quick and easy: run the docker image
 
 `docker run -it ghcr.io/sachapan/getsubs`
 
@@ -62,8 +62,9 @@ This program has two modes of operation:
 
 Mode 1: No command line parameters
 
-The program queries for the latest videos from jw.org and allows
-you to choose which one you'd like the subtitles for and then displays them.
+The program queries for the latest videos from jw.org and presents a menu from which 
+videos can be selected and displays the subtitles therefrom.  The menu also 
+allows for a URL of a video file to be supplied from which subtitles are extracted and displayed.
 
 Mode 2:
     
