@@ -2,6 +2,7 @@
 # TODO: Handle input out of range
 # DONE: if we are passed a video file name just process it.......
 
+import nltk
 import os
 import re
 import json
@@ -18,15 +19,15 @@ from argparse import RawTextHelpFormatter
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module='html2markdown')
 
-url="https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
+url = "https://b.jw-cdn.org/apis/mediator/v1/categories/E/LatestVideos?detailed=1&clientType=www"
 tmp = ""
 banner = """
-   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----. 
-   | || {  } |    { {__-`| } { | {_} }`-' '-'{ |`-' '-'} |   } |__}{ {__-` 
-{`-' }{  /\  }    .-._} }\ `-' / {_} }  } {  | }  } {  } '--.} '__}.-._} } 
- `---'`-'  `-'    `----'  `---'`----'   `-'  `-'  `-'  `----'`----'`----'  
+   .-..-.  .-.     .----..-. .-.----. .-----..-..-----..-.   .----. .----.
+   | || {  } |    { {__-`| } { | {_} }`-' '-'{ |`-' '-'} |   } |__}{ {__-`
+{`-' }{  /\  }    .-._} }\ `-' / {_} }  } {  | }  } {  } '--.} '__}.-._} }
+ `---'`-'  `-'    `----'  `---'`----'   `-'  `-'  `-'  `----'`----'`----'
                                                                            """
-helptext = "help text" 
+helptext = "help text"
 # """
 # This program has two modes of operation:
 
@@ -37,23 +38,25 @@ helptext = "help text"
 #             and attempts to extract the subtitle information from the video to display.
 
 #             There are two additional parameters that can passed when providing the URL:
-#                 -t Outputs the subtitles to a text file in the current directory named with the 
+#                 -t Outputs the subtitles to a text file in the current directory named with the
 #                     title of the video.
 #                 -d Outputs the subtitles to a Microsoft Word docx file in the current directory
 #                     named with the title of the video.
-#             IMPORTANT: The second mode requires that you have installed FFpmeg and the ffmpeg.exe program is 
+#             IMPORTANT: The second mode requires that you have installed FFpmeg and the ffmpeg.exe program is
 #             available in your PATH.
-            
+
 #             You can find FFmpeg at:  https://ffmpeg.org/download.html
-# """                                            
+# """
 helptextalt = """               This program queries for the latest videos from jw.org and allows
             you to choose which one you'd like the subtitles for and then displays them.
             """
 
+
 def help():
-     print(banner)
-     print(main.__doc__)
-     sys.exit()
+    print(banner)
+    print(main.__doc__)
+    sys.exit()
+
 
 def download_file(url):
     """
@@ -63,12 +66,13 @@ def download_file(url):
     lines = r.iter_lines()
     return lines
 
+
 def download_video(url, mytmp):
     filename = mytmp + url.split("/")[-1]
     print("Filename: ", filename)
     if os.path.isfile(filename):
         print("Already downloaded: ", filename)
-        return(filename)
+        return (filename)
     print("Downloading to: ", filename)
     print("Checking for video file at URL provided.")
     with urllib.request.urlopen(url) as response:
@@ -76,7 +80,7 @@ def download_video(url, mytmp):
         print("File type found is: ", info.get_content_maintype())
     if info.get_content_maintype() != "video":
         print("Video file not found at ", url)
-        return("fail")
+        return ("fail")
     try:
         query_parameters = {"downloadformat": "mp4"}
         response = requests.get(url, params=query_parameters, stream=True)
@@ -88,32 +92,58 @@ def download_video(url, mytmp):
         #     print("Something didn't work downloading the file.")
         #     print("Error: ", response.ok)
         #     return("fail")
-        return(filename)
+        return (filename)
     except Exception as e:
         print(e)
-        return("fail")
+        return ("fail")
+
 
 def get_title(input_file):
     """
     The get_title function accepts the name of a video file containing an embedded title in its metdata, extracts
     it with ffmpeg and returns it.
-    """    
+    """
     try:
         metadata = ffmpeg.probe(input_file, show_entries="format_tags=title")
         title = metadata.get('format', {}).get('tags', {}).get('title', '')
         title = re.sub(":", "\:", title)
         title = re.sub('"', "", title)
-        #title = re.sub("\.", "", title)
+        # title = re.sub("\.", "", title)
         # title = re.sub("(", "- ", title)
         # title = re.sub(")", "", "title)
         title = re.sub(",", "", title)
         if title:
             return title.strip()
         else:
-            return()
+            return ()
     except ffmpeg.Error as e:
         print(f"Error getting title metadata: {e.stderr}")
         return None
+
+
+def break_into_paragraphs_nltk(text):
+    # strip out ', '
+    text = re.sub("', '", "", text)
+    # Use nltk's sent_tokenize and then join into paragraphs
+    sentences = nltk.sent_tokenize(text)
+    paragraphs = []
+    current_paragraph = []
+
+    for sentence in sentences:
+        if sentence == '':
+            continue
+        current_paragraph.append(sentence)
+        # Create a new paragraph after 5 sentences
+        if len(current_paragraph) >= 5:
+            paragraphs.append(' '.join(current_paragraph))
+            current_paragraph = []
+
+    if current_paragraph:  # add remaining sentences
+        paragraphs.append(' '.join(current_paragraph))
+    for i, paragraph in enumerate(paragraphs):
+        print(f"{paragraph}\n  ")
+    return paragraphs
+
 
 def get_subtitles(video):
     """
@@ -130,17 +160,18 @@ def get_subtitles(video):
         print(f"Error extracting subtitles: {e.stderr}")
     with open(srt, 'r', encoding='utf-8') as file:
         lines = file.readlines()
-    return(lines)
+    return (lines)
+
 
 def processlines(lines):
     """
-    The processlines function accepts lines and strips extraneous HTML and other tags and returns the 
+    The processlines function accepts lines and strips extraneous HTML and other tags and returns the
     cleaned text.
     """
     result_lines = []
     current_line = ""
     for line in lines:
-        #line = line.strip().decode("utf-8")
+        # line = line.strip().decode("utf-8")
         line = line.strip()
         # Convert any html elements to markdown
         line = html2markdown.convert(line)
@@ -153,7 +184,7 @@ def processlines(lines):
         # Skip lines that contain only numbers and symbols
         if re.match(r"^[0-9\W]+$", line):
             continue
-        #current_line += line
+        # current_line += line
         # Strip any remaining html stuff
         line = re.sub("<[^<]+?>", "", line)
         # Skip blank lines
@@ -170,7 +201,8 @@ def processlines(lines):
     # Add the last line
     if current_line:
         result_lines.append(current_line.strip())
-    return(result_lines)
+    return (result_lines)
+
 
 def savedocx(title, subs):
     """
@@ -184,7 +216,8 @@ def savedocx(title, subs):
     document.add_heading(title, level=1)
     document.add_paragraph("\n".join(subs))
     document.save(savename)
-    return()
+    return ()
+
 
 def savetext(title, subs):
     """
@@ -195,11 +228,12 @@ def savetext(title, subs):
     savename = title + ".txt"
     print(savename)
     f = open(savename, "w", encoding="utf8")
-    #f.writelines(subs)
+    # f.writelines(subs)
     f.write("\n".join(subs))
     f.close()
-    return()
-    
+    return ()
+
+
 def webmenu():
     """
     The webmenu function does not accept any parameters.  It queries the currently available videos from {url},
@@ -212,15 +246,15 @@ def webmenu():
     vidslist = []
     ids = 0
     for item in range(len(media)):
-        #print("Item:", item)
+        # print("Item:", item)
         video_key = media[item]["languageAgnosticNaturalKey"]
-        #print(video_key)
+        # print(video_key)
         title = media[item]["title"]
         # Added logic for video files that do not contain subtitles like song releases
         if "subtitles" not in media[item]["files"][3]:
             continue
         subtitles_url = media[item]["files"][3]["subtitles"]["url"]
-        #print(subtitles_url)
+        # print(subtitles_url)
         video = media[item]["files"][3]["progressiveDownloadURL"]
         download = download_file(subtitles_url)
         subs = processlines(download)
@@ -228,36 +262,39 @@ def webmenu():
         values = [ids, video_key, title, video, subs]
         vidslist.append(values)
         ids = ids + 1
-        #print(video_key)
-    #print("Number of videos available: ", len(vidslist))
-    #print(vidslist)
-    #exit()
+        # print(video_key)
+    # print("Number of videos available: ", len(vidslist))
+    # print(vidslist)
+    # exit()
     while True:
-        print("\n",banner)
+        print("\n", banner)
         print("Number \t Title")
         print("------ \t -----")
         for item in range(len(vidslist)):
             print(vidslist[item][0], "\t", vidslist[item][2])
-            #print(vidslist[item][0] + 1, "\t", vidslist[item][2])
-        print("\n")        
-        vidnum = input("Please enter the video number, supply the URL of the video file (must end with .mp4) or q to exit: ")
+            # print(vidslist[item][0] + 1, "\t", vidslist[item][2])
+        print("\n")
+        vidnum = input(
+            "Please enter the video number, supply the URL of the video file (must end with .mp4) or q to exit: ")
         if vidnum == "":
             continue
         if vidnum == "q":
             break
         if vidnum.startswith('http') and vidnum.endswith('.mp4'):
-            download = download_video(vidnum, tmp) 
+            download = download_video(vidnum, tmp)
             if download == "fail":
                 print("I'm sorry, the download failed.")
-                continue 
+                continue
             title = get_title(download)
             subs = get_subtitles(download)
             subs = processlines(subs)
             print("\nTitle: ", title)
-            #print("\n-----Subtitles begin here.-----\n")
-            print(*subs, sep="\n")
-            #print("\n-----Subtitles end here.-----\n")
-        #else:
+            # print("\n-----Subtitles begin here.-----\n")
+            # print(*subs, sep="\n")
+            print("\nNow finding paragraphs.....")
+            print(break_into_paragraphs_nltk(subs))
+            # print("\n-----Subtitles end here.-----\n")
+        # else:
         #    print("ERROR: That doesn't appear to be a valid URL.\n")
         if not vidnum.strip().isdigit():
             continue
@@ -267,11 +304,17 @@ def webmenu():
             continue
         subtitle = vidslist[int(vidnum)]
         print("\nTitle: ", subtitle[2])
-        print("Link: ", subtitle[3],"\n")
-        #print("-----Subtitles begin here.-----\n")
-        print(*subtitle[4], sep='\n')
-        #print("\n-----Subtitles end here.-----\n")
-    return()
+        print("Link: ", subtitle[3], "\n")
+        # print("-----Subtitles begin here.-----\n")
+        # print(*subtitle[4], sep='\n')
+        # print(break_into_paragraphs_nltk(str(subtitle[4])))
+        paragraphs = break_into_paragraphs_nltk(str(subs))
+        # paragraphs = break_into_paragraphs_nltk(str(subtitle[4]))
+        for i, paragraph in enumerate(paragraphs):
+            print(f"  {paragraph}\n  ")
+        # print("\n-----Subtitles end here.-----\n")
+    return ()
+
 
 def main():
     """
@@ -285,25 +328,26 @@ This program has two modes of operation:
     and attempts to extract the subtitle information from the video to display.
 
     There are two additional parameters that can passed when providing the URL:
-        -t Outputs the subtitles to a text file in the current directory named with the 
+        -t Outputs the subtitles to a text file in the current directory named with the
             title of the video.
         -d Outputs the subtitles to a Microsoft Word docx file in the current directory
             named with the title of the video.
 
-    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg program is 
+    IMPORTANT: The second option requires that you have installed FFpmeg and the ffmpeg program is
     available in your PATH.
-    
+
     You can find FFmpeg at:  https://ffmpeg.org/download.html
-    """                                            
+    """
     print("\nSubtitle downloader for jw.org videos.\n")
-    #print(banner)
+    # print(banner)
     print("Visit the official website of Jehovah's Witnesses: https://jw.org")
     print("Finding current videos.....")
-    parser = argparse.ArgumentParser(description=main.__doc__, formatter_class=RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=main.__doc__, formatter_class=RawTextHelpFormatter)
     parser.add_argument(
-        '-d', 
-        '--docx', 
-        required=False, 
+        '-d',
+        '--docx',
+        required=False,
         action="store_true",
         help="Save subtitles to a docx file."
     )
@@ -324,7 +368,7 @@ This program has two modes of operation:
         vidurl = args.video
         if vidurl.endswith('.mp4'):
             if vidurl.startswith('http'):
-                download = download_video(vidurl, tmp) 
+                download = download_video(vidurl, tmp)
             else:
                 download = vidurl
             if download == "fail":
@@ -340,9 +384,17 @@ This program has two modes of operation:
             if args.docx:
                 savedocx(title, subs)
             if not args.textfile and not args.docx:
+                print("Subtitles from supplied URL.\n")
                 print("\nTitle: ", title)
                 print("\n-----Subtitles begin here.-----\n")
-                print(*subs, sep="\n")
+                paragraphs = break_into_paragraphs_nltk(str(subs))
+                for i, paragraph in enumerate(paragraphs):
+                    print(f"  {paragraph}\n  ")
+                # print("Raw text")
+                # print(*subs, sep="\n")
+                # print("now attempting to print with paragraphs.")
+
+                # , sep="\n")
                 print("\n\n-----Subtitles end here.-----\n")
         else:
             print("ERROR: That doesn't appear to be a valid URL.\n")
@@ -350,6 +402,7 @@ This program has two modes of operation:
     else:
         webmenu()
     print("Hope that helps.\nGoodbye.")
+
 
 if __name__ == "__main__":
     main()
