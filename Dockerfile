@@ -12,6 +12,7 @@ COPY requirements.txt .
 # Install the dependencies
 RUN python3 -m ensurepip
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
+RUN python3 -m nltk.downloader punkt_tab
 
 # Copy the script file to the container
 COPY getjwsubs.py .
