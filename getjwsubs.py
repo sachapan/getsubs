@@ -244,11 +244,11 @@ def savetext(title, subs):
     f.close()
     return ()
 
-
 def webmenu():
     """
-    The webmenu function does not accept any parameters.  It queries the currently available videos from {url},
-    and presents a menu for the user to select from.  Upon selection, the video subtitles are displayed."""
+    The webmenu function does not accept any parameters. It queries the currently available videos from {url},
+    and presents a menu for the user to select from. Upon selection, the video subtitles are displayed.
+    """
     r = requests.get(url)
     r_dict = r.json()
     r_json = json.dumps(r_dict, indent=4)
@@ -257,15 +257,12 @@ def webmenu():
     vidslist = []
     ids = 0
     for item in range(len(media)):
-        # print("Item:", item)
+        print("Item:", item)
         video_key = media[item]["languageAgnosticNaturalKey"]
-        # print(video_key)
         title = media[item]["title"]
-        # Added logic for video files that do not contain subtitles like song releases
         if "subtitles" not in media[item]["files"][3]:
             continue
         subtitles_url = media[item]["files"][3]["subtitles"]["url"]
-        # print(subtitles_url)
         video = media[item]["files"][3]["progressiveDownloadURL"]
         download = download_file(subtitles_url)
         subs = processlines(download)
@@ -273,17 +270,12 @@ def webmenu():
         values = [ids, video_key, title, video, subs]
         vidslist.append(values)
         ids = ids + 1
-        # print(video_key)
-    # print("Number of videos available: ", len(vidslist))
-    # print(vidslist)
-    # exit()
     while True:
         print("\n", banner)
         print("Number \t Title")
         print("------ \t -----")
         for item in range(len(vidslist)):
             print(vidslist[item][0], "\t", vidslist[item][2])
-            # print(vidslist[item][0] + 1, "\t", vidslist[item][2])
         print("\n")
         vidnum = input(
             "Please enter the video number, supply the URL of the video file (must end with .mp4) or q to exit: ")
@@ -300,31 +292,107 @@ def webmenu():
             subs = get_subtitles(download)
             subs = processlines(subs)
             print("\nTitle: ", title)
-            # print("\n-----Subtitles begin here.-----\n")
-            # print(*subs, sep="\n")
             print("\nNow finding paragraphs.....")
-            print(break_into_paragraphs_nltk(subs))
-            # print("\n-----Subtitles end here.-----\n")
-        # else:
-        #    print("ERROR: That doesn't appear to be a valid URL.\n")
-        if not vidnum.strip().isdigit():
-            continue
-        if int(vidnum) > len(vidslist) - 1:
-            print("Error!\n  Please enter a number from the available options.")
-            print("  Maximum number is:", len(vidslist) - 1)
-            continue
-        subtitle = vidslist[int(vidnum)]
-        print("\nTitle: ", subtitle[2])
-        print("Link: ", subtitle[3], "\n")
-        # print("-----Subtitles begin here.-----\n")
-        # print(*subtitle[4], sep='\n')
-        # print(break_into_paragraphs_nltk(str(subtitle[4])))
-        paragraphs = break_into_paragraphs_nltk(str(subs))
-        # paragraphs = break_into_paragraphs_nltk(str(subtitle[4]))
-        for i, paragraph in enumerate(paragraphs):
-            print(f"  {paragraph}\n  ")
-        # print("\n-----Subtitles end here.-----\n")
+            paragraphs = break_into_paragraphs_nltk(str(subs))
+            for i, paragraph in enumerate(paragraphs):
+                print(f"  {paragraph}\n  ")
+        else:
+            if not vidnum.strip().isdigit():
+                print("ERROR: Please enter a valid number or URL.")
+                continue
+            if int(vidnum) > len(vidslist) - 1:
+                print("Error!\n  Please enter a number from the available options.")
+                print("  Maximum number is:", len(vidslist) - 1)
+                continue
+            print("Processing entry ", vidnum)
+            subtitle = vidslist[int(vidnum)]
+            print("\nTitle: ", subtitle[2])
+            print("Link: ", subtitle[3], "\n")
+            paragraphs = break_into_paragraphs_nltk(str(subtitle[4]))  # Use subtitle[4] instead of subs
+            for i, paragraph in enumerate(paragraphs):
+                print(f"  {paragraph}\n  ")
     return ()
+# def webmenu():
+#     """
+#     The webmenu function does not accept any parameters.  It queries the currently available videos from {url},
+#     and presents a menu for the user to select from.  Upon selection, the video subtitles are displayed."""
+#     r = requests.get(url)
+#     r_dict = r.json()
+#     r_json = json.dumps(r_dict, indent=4)
+#     parsed_json = json.loads(r_json)
+#     media = parsed_json["category"]["media"]
+#     vidslist = []
+#     ids = 0
+#     for item in range(len(media)):
+#         print("Item:", item)
+#         video_key = media[item]["languageAgnosticNaturalKey"]
+#         # print(video_key)
+#         title = media[item]["title"]
+#         # Added logic for video files that do not contain subtitles like song releases
+#         if "subtitles" not in media[item]["files"][3]:
+#             continue
+#         subtitles_url = media[item]["files"][3]["subtitles"]["url"]
+#         # print(subtitles_url)
+#         video = media[item]["files"][3]["progressiveDownloadURL"]
+#         download = download_file(subtitles_url)
+#         subs = processlines(download)
+#         keys = ['id', 'video key', 'name', 'link', 'subtitles']
+#         values = [ids, video_key, title, video, subs]
+#         vidslist.append(values)
+#         ids = ids + 1
+#         # print(video_key)
+#     # print("Number of videos available: ", len(vidslist))
+#     # print(vidslist)
+#     # exit()
+#     while True:
+#         print("\n", banner)
+#         print("Number \t Title")
+#         print("------ \t -----")
+#         for item in range(len(vidslist)):
+#             print(vidslist[item][0], "\t", vidslist[item][2])
+#             # print(vidslist[item][0] + 1, "\t", vidslist[item][2])
+#         print("\n")
+#         vidnum = input(
+#             "Please enter the video number, supply the URL of the video file (must end with .mp4) or q to exit: ")
+#         if vidnum == "":
+#             continue
+#         if vidnum == "q":
+#             break
+#         if vidnum.startswith('http') and vidnum.endswith('.mp4'):
+#             download = download_video(vidnum, tmp)
+#             if download == "fail":
+#                 print("I'm sorry, the download failed.")
+#                 continue
+#             title = get_title(download)
+#             subs = get_subtitles(download)
+#             subs = processlines(subs)
+#             print("\nTitle: ", title)
+#             # print("\n-----Subtitles begin here.-----\n")
+#             # print(*subs, sep="\n")
+#             print("\nNow finding paragraphs.....")
+#             print(break_into_paragraphs_nltk(subs))
+#             # print("\n-----Subtitles end here.-----\n")
+#         # else:
+#         #    print("ERROR: That doesn't appear to be a valid URL.\n")
+#         if not vidnum.strip().isdigit():
+#             continue
+#         if int(vidnum) > len(vidslist) - 1:
+#             print("Error!\n  Please enter a number from the available options.")
+#             print("  Maximum number is:", len(vidslist) - 1)
+#             continue
+#         print("Processing entry ", vidnum)
+#         subtitle = vidslist[int(vidnum)]
+#         print("\nTitle: ", subtitle[2])
+#         print("Link: ", subtitle[3], "\n")
+#         # print("-----Subtitles begin here.-----\n")
+#         # print(*subtitle[4], sep='\n')
+#         # print(break_into_paragraphs_nltk(str(subtitle[4])))
+#         paragraphs = break_into_paragraphs_nltk(str(subs))
+#         # paragraphs = break_into_paragraphs_nltk(str(subtitle[4]))
+#         for i, paragraph in enumerate(paragraphs):
+#             print(f"  {paragraph}\n  ")
+#         # print("\n-----Subtitles end here.-----\n")
+#     return ()
 
 
 def main():
